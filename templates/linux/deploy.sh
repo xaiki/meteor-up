@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /opt/<%= appName %>/config/env.sh
+
 # utilities
 gyp_rebuild_inside_node_modules () {
   for npmModule in ./*; do
@@ -60,8 +62,8 @@ revert_app (){
   if [[ -d old_app ]]; then
     sudo rm -rf app
     sudo mv old_app app
-    sudo stop <%= appName %> || :
-    sudo start <%= appName %> || :
+    sudo $system_stop  <%= appName %> || :
+    sudo $system_start <%= appName %> || :
 
     echo "Latest deployment failed! Reverted back to the previous version." 1>&2
     exit 1
@@ -74,6 +76,7 @@ revert_app (){
 
 # logic
 set -e
+set -x
 
 TMP_DIR=/opt/<%= appName %>/tmp
 BUNDLE_DIR=${TMP_DIR}/bundle
@@ -123,12 +126,11 @@ sudo mv tmp/bundle app
 
 #wait and check
 echo "Waiting for MongoDB to initialize. (5 minutes)"
-. /opt/<%= appName %>/config/env.sh
 wait-for-mongo ${MONGO_URL} 300000
 
 # restart app
-sudo stop <%= appName %> || :
-sudo start <%= appName %> || :
+sudo $system_stop  <%= appName %> || :
+sudo $system_start <%= appName %> || :
 
 echo "Waiting for <%= deployCheckWaitTime %> seconds while app is booting up"
 sleep <%= deployCheckWaitTime %>

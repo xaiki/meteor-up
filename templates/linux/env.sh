@@ -7,3 +7,7 @@ export ROOT_URL=http://localhost
 <% for(var key in env) { %>
   export <%- key %>=<%- ("" + env[key]).replace(/./ig, '\\$&') %>
 <% } %>
+
+<% for(var key in system) { %>
+  export system_<%- key %>=<%- ("" + system[key]).replace(/./ig, '\\$&') %>
+<% } %>
